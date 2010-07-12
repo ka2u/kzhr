@@ -28,14 +28,18 @@ sub run {
 }
 
 sub build {
-    my ($self, $env) = @_
+    my ($self, $env) = @_;
 
     my $req = Kzhr::Request->new($env);
     my $res = Kzhr::Response->new;
     $self->set_context(Kzhr::Context->new($req, $res));
 
-    $self->dispatcher->dispatch($self);
+    $self->{dispatcher}->dispatch($self);
 
+    #TODO response
+    $self->context->res->status(200);
+    $self->context->res->content_type('text/html');
+    $self->context->res->body('hello');
     return $self->context->res->finalize;
 }
 

@@ -3,13 +3,25 @@ package Kzhr::Dispatcher;
 use strict;
 use warnings;
 use base "Router::Simple";
+use UNIVERSAL::require;
 
 sub dispatch {
     my ($self, $app) = @_;
 
-    if (my $p = $self->match($app->env)) {
+    if (my $p = $self->match($app->context->req->env)) {
+        my $class = ref $app;
+        my $action = $p->{action};
+        my $controller = "${class}::$p->{controller}";
+        #TODO require
+        $controller->require;
+        $controller->$action($app);
+    }
+    else {
+        # 404
+        warn "404";
     }
 }
+
 
 1;
 __END__
