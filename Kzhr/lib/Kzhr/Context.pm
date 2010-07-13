@@ -6,11 +6,12 @@ use Kzhr::Request;
 use Kzhr::Response;
 
 sub new {
-    my ($class, $req, $res) = @_;
+    my ($class, $req, $res, $log) = @_;
 
     bless {
         request  => $req,
         response => $res,
+        log      => $log,
     }, $class;
 }
 

@@ -5,8 +5,10 @@ use warnings;
 our $VERSION = '0.01';
 use Kzhr::Context;
 use Kzhr::Dispatcher;
+use Kzhr::Logger;
 use Kzhr::Request;
 use Kzhr::Response;
+use Data::Dumper;
 
 {
     our $context;
@@ -24,26 +26,28 @@ sub run {
     my $class = shift;
     my $self = $class->new;
     $self->startup;
-    return sub { $self->build(shift) };
+    return sub { $self->process(shift) };
 }
 
-sub build {
+sub process {
     my ($self, $env) = @_;
 
     my $req = Kzhr::Request->new($env);
     my $res = Kzhr::Response->new;
-    $self->set_context(Kzhr::Context->new($req, $res));
+    my $log = Kzhr::Logger->new;
+    $self->set_context(Kzhr::Context->new($req, $res, $log));
+    $self->init;
 
-    $self->{dispatcher}->dispatch($self);
+    my @response = $self->{dispatcher}->dispatch($self);
+    $self->context->res->renew(@response) unless $self->context->res->location;
 
-    #TODO response
-    $self->context->res->status(200);
-    $self->context->res->content_type('text/html');
-    $self->context->res->body('hello');
     return $self->context->res->finalize;
 }
 
+# This will run once at startup
 sub startup {}
+# This will run for each request
+sub init {}
 
 
 1;

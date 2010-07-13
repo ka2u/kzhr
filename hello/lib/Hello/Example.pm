@@ -4,6 +4,8 @@ use warnings;
 use base "Kzhr::Controller";
 
 sub say {
-    warn "say hello.";
+    my ($class, $app) = @_;
+    $app->context->res->redirect("http://google.co.jp");
+    return "say hello.";
 }
 1;

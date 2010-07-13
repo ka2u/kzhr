@@ -14,11 +14,11 @@ sub dispatch {
         my $controller = "${class}::$p->{controller}";
         #TODO require
         $controller->require;
-        $controller->$action($app);
+        my $body = $controller->$action($app);
+        return ('200', {'Content-Type' => 'text/html'}, $body);
     }
     else {
-        # 404
-        warn "404";
+        return ('404', {'Content-Type' => 'text/html'}, '404 not found');
     }
 }
 

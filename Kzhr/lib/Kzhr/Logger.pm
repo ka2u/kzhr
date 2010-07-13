@@ -2,6 +2,11 @@ package Kzhr::Logger;
 
 use strict;
 use warnings;
+use Log::Dispatch;
+
+sub new {
+    
+}
 
 1;
 __END__

@@ -4,6 +4,13 @@ use strict;
 use warnings;
 use base "Plack::Response";
 
+sub renew {
+    my ($self, $status, $headers, $body) = @_;
+    $self->status($status);
+    $self->headers($headers);
+    $self->body($body);
+}
+
 1;
 __END__
 
