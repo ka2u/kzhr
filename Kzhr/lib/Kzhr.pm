@@ -3,6 +3,7 @@ package Kzhr;
 use strict;
 use warnings;
 our $VERSION = '0.01';
+use File::Spec;
 use Kzhr::Context;
 use Kzhr::Dispatcher;
 use Kzhr::Logger;
@@ -32,6 +33,7 @@ sub run {
 sub process {
     my ($self, $env) = @_;
 
+    my $home = $self->home_detect;
     my $req = Kzhr::Request->new($env);
     my $res = Kzhr::Response->new;
     my $log = Kzhr::Logger->new;
@@ -42,6 +44,21 @@ sub process {
     $self->context->res->renew(@response) unless $self->context->res->location;
 
     return $self->context->res->finalize;
+}
+
+sub home_detect {
+    my $self = shift;
+
+    my $class = ref $self;
+    if (my $path = $INC{$class}) {
+        $path =~ s/$class$//;
+        my @lib = File::Spec->splitdir($path);
+        while (@lib) {
+            last unless $lib[-1] =~ /^b?lib$/ || $lib[-1] eq '';
+            pop @lib;
+        }
+        return File::Spec->catdir(@lib);
+    }
 }
 
 # This will run once at startup
